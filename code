@@ -1,0 +1,146 @@
+#include<iostream>
+#include<stdio.h>
+using namespace std;
+
+int graph[50][50];					//used to calculate degree of the graph
+int color[50][50];					//a 2D array to store colors alloted to any edge
+int setLeft[50][10];				//a 2D array which stores list of colors alloted to every edge in left set
+int setRight[50][10];				//a 2D array which stores list of colors alloted to every edge in right set
+
+void colorMe(int l,int r,int no_col)
+{	
+	int col;										//a variable to store random color value generated
+	int found[10];
+	for(int i=0;i<no_col;i++)
+		found[i]=0;
+	for(int i=0;i<r;i++)
+	{
+		for(int j=0;j<no_col;j++)
+			::setRight[i][j]=0;
+	}
+	for(int i=0;i<l;i++)
+	{
+		for(int j=0;j<no_col;j++)
+			::setLeft[i][j]=0;
+	}
+	int counter = 0;
+	int edgeCounter = 0;
+	for(int i=0;i<l;i++)
+	{
+		//cout<<"\nfor node "<<i;
+		for(int j=0;j<r;j++)
+		{
+			if(::graph[i][j]==1)
+			{
+				x:
+				col = rand() % no_col;
+				//cout<<"\nrandom no."<<col;
+				if((::setRight[j][col]==1)||(::setLeft[i][col]==1))
+				{
+					if(found[col]==0)
+					{found[col]=1;}
+					for(int k=0;k<no_col;k++)
+					{
+						counter=counter+found[k];
+					}
+					
+					if(counter==no_col)
+					{	
+						//cout<<"\nbreak applied";
+						break;
+					}
+					else
+					{
+						if((::setRight[j][0]==0)&&(::setLeft[i][0]==0))
+						{
+							setRight[j][0]=1;
+							setLeft[i][0]=1;
+							color[i][j]=0;
+							cout<<"\nCase 2: edge "<<edgeCounter<<"("<<i<<","<<j<<")"<< "gets color: a="<<col<<" swaps with b=0";
+							edgeCounter++;
+						}
+						else if((::setRight[j][1]==0)&&(::setLeft[i][1]==0))
+						{
+							setRight[j][1]=1;
+							setLeft[i][1]=1;
+							color[i][j]=1;
+							cout<<"\nCase 2: edge "<<edgeCounter<<"("<<i<<","<<j<<")"<< "gets color: a="<<col<<" swaps with b=1";
+							edgeCounter++;
+						}
+						
+						else
+							goto x;
+					}
+						
+							
+				}
+				else
+				{
+						
+						setRight[j][col]=1;
+						setLeft[i][col]=1;
+						color[i][j]=col;
+						cout<<"\nCase 1: edge "<<edgeCounter<<"("<<i<<","<<j<<")"<< "gets color: "<<col;
+						edgeCounter++;
+				}
+			}
+			
+		}
+	}
+	
+	cout<<"\ncolors alloted:";
+	for(int i=0;i<l;i++)
+	{
+		for(int j=0;j<r;j++)
+		{
+			if(::graph[i][j]==1)
+				cout<<"\n"<<i<<"->"<<j<<"=color "<<color[i][j];
+		}
+		
+	}
+	
+}
+
+
+
+void allot(int left, int right, int edges)
+{
+	int count[50];
+	for(int i=0;i<left;i++)
+		{
+			for(int j=0;j<right;j++)
+			{::graph[i][j]=1;
+			}
+			count[i]=0;
+		}
+			
+
+	int max=0;
+	for(int i=0;i<left;i++)
+	{
+		for(int j=0;j<right;j++)
+		{
+			if(::graph[i][j]==1)
+				count[i]++;
+		}
+		if(count[i]>max)
+			max = count[i];
+	}
+	cout<<"\ndegree of the graph is:"<<max;
+	colorMe(left,right,max);					//this function is the main graph coloring algorithm
+}	
+
+int main()
+{
+int choice;
+char ch;
+int left,right,edges,i,j;
+int k=0,max=0;
+
+	cout<<"\nShowing output for file 1(k5.7.dat)";
+	left = 5;
+	right = 7;
+	edges = 35;
+	cout<<"\n"<<left<<" "<<right<<" "<<edges;
+	allot(left,right,edges);						//this function gets edges for the particular graph
+}
